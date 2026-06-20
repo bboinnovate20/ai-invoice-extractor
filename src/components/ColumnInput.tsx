@@ -54,7 +54,7 @@ function ColumnInput({ columns, setColumns }: ColumnInputProps) {
                            text-[var(--accent)] hover:text-red-500 hover:bg-red-50
                            dark:hover:bg-red-900/20 cursor-pointer transition-all"
                 title="Remove column"
-                aria-label={`Remove ${col}`}
+                aria-label={`RemoveX ${col}`}
               >
                 <CloseIcon />
               </button>
