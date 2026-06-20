@@ -1,15 +1,15 @@
 import { useCallback, useState } from 'react'
 import FileUpload, { type FileItem } from './components/FileUpload.tsx'
-import { configureS3FromEnv, uploadMultipleToS3, type UploadResult } from './services/s3.ts'
+// import { configureS3FromEnv, uploadMultipleToS3, type UploadResult } from './services/s3.ts'
 import './App.css'
 import ColumnInput from './components/ColumnInput.tsx'
 import { useToast } from './components/ToastContext.ts'
-import { processText, processTextBatch } from './services/process.ts'
+import { processTextBatch } from './services/process.ts'
 import { ocrFiles, ocrFilesIndividual } from './services/ocr.ts'
 
 function initS3(): boolean {
   try {
-    configureS3FromEnv()
+    // configureS3FromEnv()
     return true
   } catch {
     console.warn('S3 not configured. Set VITE_AWS_* environment variables in .env')
@@ -19,30 +19,30 @@ function initS3(): boolean {
 
 function App() {
   const toast = useToast()
-  const [uploading, setUploading] = useState(false)
+  // const [uploading] = useState(false)
   const [loading, setLoading] = useState(false)
   const [loadingMessage, setLoadingMessage] = useState('')
   const [columns, setColumns] = useState<string[]>([])
   const [items, setItems] = useState<FileItem[]>([])
   const [s3Ready] = useState(initS3)
 
-  const handleUpload = useCallback(async (files: File[]): Promise<UploadResult[]> => {
-    setUploading(true)
+  // const handleUpload = useCallback(async (files: File[]): Promise<UploadResult[]> => {
+  //   setUploading(true)
 
-    const { uploaded, errors } = await uploadMultipleToS3(files, {
-      keyPrefix: 'uploads',
-      ttl: 3600,
-    })
+  //   const { uploaded, errors } = await uploadMultipleToS3(files, {
+  //     keyPrefix: 'uploads',
+  //     ttl: 3600,
+  //   })
 
-    if (errors.length > 0) {
-      errors.forEach(e => toast(`${e.fileName}: ${e.error}`, 'error'))
-      setUploading(false)
-      return []
-    }
+  //   if (errors.length > 0) {
+  //     errors.forEach(e => toast(`${e.fileName}: ${e.error}`, 'error'))
+  //     setUploading(false)
+  //     return []
+  //   }
 
-    setUploading(false)
-    return uploaded
-  }, [toast])
+  //   setUploading(false)
+  //   return uploaded
+  // }, [toast])
 
   // const handleUploadClick = useCallback((files: File[]) => {
   //   handleUpload(files)
@@ -114,7 +114,7 @@ function App() {
         maxSizeMB={10}
       />
 
-      {uploading && (
+      {loading && (
         <p className="mt-4 text-sm text-[var(--accent)] font-medium animate-pulse">
           Uploading...
         </p>
@@ -124,24 +124,24 @@ function App() {
       {(
         <button
           type="button"
-          disabled={items.length === 0 || columns.length === 0 || uploading || loading}
+          disabled={items.length === 0 || columns.length === 0 || loading}
           onClick={() => handleSubmit()}
           className="mt-6 w-full max-w-lg py-3 px-6 rounded-lg font-semibold text-white
                      bg-[var(--accent)] hover:opacity-90 active:scale-[0.98]
                      transition-all duration-150 cursor-pointer disabled:bg-gray-300
                      inline-flex items-center justify-center"
         >
-          {(uploading || loading) && (
+          {( loading) && (
             <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
           )}
-          {uploading ? "Uploading" : loading ? "Extracting" : "Extract Data"}
+          { loading ? "Extracting" : "Extract Data"}
         </button>
       )}
 
-      {(uploading || loading) && (
+      {( loading) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-4 px-8 py-6 rounded-xl bg-white dark:bg-[#1f2028] shadow-2xl">
             <svg className="animate-spin h-8 w-8 text-[var(--accent)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -149,7 +149,7 @@ function App() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
             <p className="text-sm font-medium text-[var(--text-h)]">
-              {loadingMessage || (uploading ? 'Uploading files...' : 'Extracting data...')}
+              {loadingMessage || ( 'Extracting data...')}
             </p>
           </div>
         </div>
