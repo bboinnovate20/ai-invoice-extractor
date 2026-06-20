@@ -1,5 +1,14 @@
 import { useState } from 'react'
 
+function CloseIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+         stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+      <path d="M3 3l8 8M11 3l-8 8" />
+    </svg>
+  )
+}
+
 interface ColumnInputProps {
   columns: string[]
   setColumns: React.Dispatch<React.SetStateAction<string[]>>
@@ -19,6 +28,10 @@ function ColumnInput({ columns, setColumns }: ColumnInputProps) {
     if (e.key === 'Enter') handleSubmit()
   }
 
+  const removeColumn = (index: number) => {
+    setColumns(prev => prev.filter((_, idx) => idx !== index))
+  }
+
   return (
     <div className="w-full max-w-md mx-auto mt-2.5">
       {columns.length > 0 && (
@@ -34,6 +47,17 @@ function ColumnInput({ columns, setColumns }: ColumnInputProps) {
                 {i + 1}
               </span>
               {col}
+              <button
+                type="button"
+                onClick={() => removeColumn(i)}
+                className="p-0.5 rounded-md opacity-60 hover:opacity-100
+                           text-[var(--accent)] hover:text-red-500 hover:bg-red-50
+                           dark:hover:bg-red-900/20 cursor-pointer transition-all"
+                title="Remove column"
+                aria-label={`Remove ${col}`}
+              >
+                <CloseIcon />
+              </button>
             </li>
           ))}
         </ul>
