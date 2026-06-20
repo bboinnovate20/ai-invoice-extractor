@@ -6,7 +6,6 @@ import * as XLSX from 'xlsx';
 // const LAMBDA_URL = '/lambda/2015-03-31/functions/function/invocations'
 const LAMBDA_URL = 'https://unk0evcl6k.execute-api.us-east-1.amazonaws.com/prod/'
 
-let wasmReady = false;
 
 // async function loadWasm() {
 //     if (!wasmReady) {
