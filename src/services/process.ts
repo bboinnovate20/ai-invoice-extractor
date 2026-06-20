@@ -1,6 +1,6 @@
 // const LAMBDA_URL = 'http://localhost:8080/2015-03-31/functions/function/invocations'
 
-import init, { decode_base64 } from "../../pkg/download_excel.js";
+// import init, { decode_base64 } from "../../pkg/download_excel.js";
 import * as XLSX from 'xlsx';
 
 // const LAMBDA_URL = '/lambda/2015-03-31/functions/function/invocations'
@@ -8,12 +8,12 @@ const LAMBDA_URL = 'https://unk0evcl6k.execute-api.us-east-1.amazonaws.com/prod/
 
 let wasmReady = false;
 
-async function loadWasm() {
-    if (!wasmReady) {
-        await init();
-        wasmReady = true;
-    }
-    }
+// async function loadWasm() {
+//     if (!wasmReady) {
+//         await init();
+//         wasmReady = true;
+//     }
+//     }
 
 export interface ProcessPayload {
   name: string
@@ -34,55 +34,55 @@ interface LambdaResponse {
   }
 }
 
-async function downloadExcel(base64: string, filename: string): Promise<string> {
-  await loadWasm()
-  const bytes = decode_base64(base64)
-  const blob = new Blob([bytes.buffer.slice(0) as ArrayBuffer], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
-  return url
-}
+// async function downloadExcel(base64: string, filename: string): Promise<string> {
+//   await loadWasm()
+//   const bytes = decode_base64(base64)
+//   const blob = new Blob([bytes.buffer.slice(0) as ArrayBuffer], {
+//     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+//   })
+//   const url = URL.createObjectURL(blob)
+//   const a = document.createElement('a')
+//   a.href = url
+//   a.download = filename
+//   document.body.appendChild(a)
+//   a.click()
+//   document.body.removeChild(a)
+//   URL.revokeObjectURL(url)
+//   return url
+// }
 
 
-export async function processInfo(payload: ProcessPayload): Promise<{ message: string; filename: string, url:string }> {
-  const result = await fetch(LAMBDA_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  })
+// export async function processInfo(payload: ProcessPayload): Promise<{ message: string; filename: string, url:string }> {
+//   const result = await fetch(LAMBDA_URL, {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify(payload),
+//   })
 
-  if (!result.ok) {
-    const text = await result.text()
-    throw new Error(`Process failed (${result.status}): ${text}`)
-  }
+//   if (!result.ok) {
+//     const text = await result.text()
+//     throw new Error(`Process failed (${result.status}): ${text}`)
+//   }
 
-  const response: LambdaResponse = await result.json()
-  const body = typeof response.body === 'string' 
-  ? JSON.parse(response.body) 
-  : response.body
-  const { message, excel_file } = body
+//   const response: LambdaResponse = await result.json()
+//   const body = typeof response.body === 'string' 
+//   ? JSON.parse(response.body) 
+//   : response.body
+//   const { message, excel_file } = body
 
-  if (!excel_file) {
-    throw new Error('No excel file in response')
-  }
+//   if (!excel_file) {
+//     throw new Error('No excel file in response')
+//   }
 
 
-  const filename = `extracted-${Date.now()}.xlsx`
-    // console.log('getting here');
-    const excelBase64 = Array.isArray(excel_file) ? excel_file[0] : excel_file
-  const url = await downloadExcel(excelBase64, filename)
+//   const filename = `extracted-${Date.now()}.xlsx`
+//     // console.log('getting here');
+//     const excelBase64 = Array.isArray(excel_file) ? excel_file[0] : excel_file
+//   const url = await downloadExcel(excelBase64, filename)
 
-//   console.log("done!");
-  return { message, filename, url }
-}
+// //   console.log("done!");
+//   return { message, filename, url }
+// }
 
 export async function processBatch(payload: {
   name: string
@@ -147,36 +147,36 @@ export async function processBatch(payload: {
 
 
 
-export async function processText(payload: {
-  columns: string[]
-  text: string
-}): Promise<{ message: string; filename: string; url: string }> {
-  const result = await fetch(LAMBDA_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ columns: payload.columns, text: payload.text }),
-  })
+// export async function processText(payload: {
+//   columns: string[]
+//   text: string
+// }): Promise<{ message: string; filename: string; url: string }> {
+//   const result = await fetch(LAMBDA_URL, {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({ columns: payload.columns, text: payload.text }),
+//   })
 
-  if (!result.ok) {
-    const text = await result.text()
-    throw new Error(`Process failed (${result.status}): ${text}`)
-  }
+//   if (!result.ok) {
+//     const text = await result.text()
+//     throw new Error(`Process failed (${result.status}): ${text}`)
+//   }
 
-  const response: LambdaResponse = await result.json()
-  const body = typeof response.body === 'string'
-    ? JSON.parse(response.body)
-    : response.body
-  const { message, excel_file } = body
+//   const response: LambdaResponse = await result.json()
+//   const body = typeof response.body === 'string'
+//     ? JSON.parse(response.body)
+//     : response.body
+//   const { message, excel_file } = body
 
-  if (!excel_file) {
-    throw new Error('No excel file in response')
-  }
+//   if (!excel_file) {
+//     throw new Error('No excel file in response')
+//   }
 
-  const filename = `extracted-${Date.now()}.xlsx`
-  const excelBase64 = Array.isArray(excel_file) ? excel_file[0] : excel_file
-  const url = await downloadExcel(excelBase64, filename)
-  return { message, filename, url }
-}
+//   const filename = `extracted-${Date.now()}.xlsx`
+//   const excelBase64 = Array.isArray(excel_file) ? excel_file[0] : excel_file
+//   const url = await downloadExcel(excelBase64, filename)
+//   return { message, filename, url }
+// }
 
 export async function processTextBatch(payload: {
   columns: string[]
